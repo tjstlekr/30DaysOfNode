@@ -1,0 +1,3 @@
+In this chapter of 30 days of node tutorial series, we learned about how we can use crypto module in node.js
+for hash and HMAC operations. We learned about the snippets of SHA512 , ripemd160 , SHA256 , SHA384 , SHA224 , SHA1 ,
+ md5 , whirlpool cryptographic hashing algorithms. Also, we learned about hashing a file using node.js crypto module.
