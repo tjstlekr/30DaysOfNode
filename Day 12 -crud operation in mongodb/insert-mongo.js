@@ -1,14 +1,19 @@
 const mongoClient = require('mongodb');
 
-const new_db = "mongodb://localhost:27017/demo_db";
-mongoClient.connect(new_db, (error, db) => {
+const url = 'mongodb://localhost:27017';
+
+const dbName = 'user';
+mongoClient.connect(url, (error, client) =>{
     if (error) throw error;
+    console.log('connection established');
 
-    let data = {'Name': 'Tejas', 'age': 23, 'email': 'tjstlekr@gmail.com'}
+    let db = client.db(dbName);
 
-    db.collection("details").insertOne(data, (error, collection) => {
-        if (error) throw error;
-        console.log('Record inserted successfully');
-        console.log(collection);
+    let data = {name: 'Tejas', age:'23', email:'tjstlekr@gmail.com'};
+
+    let collectionName = 'user_info';
+    db.collection(collectionName).insertOne(data, (err, client) => {
+        if (err) throw err;
+        // client.close()
     });
 });
