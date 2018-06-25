@@ -1,0 +1,282 @@
+
+Nodejsera
+
+
+30 Days of node
+Day 18 : Concepts of callbacks in node.js
+
+
+    Previous
+    Home
+    Next
+
+
+30 days of node - Nodejs tutorial series
+
+    Day 1 - The Beginning
+    Day 2 - File System in node.js
+    Day 3 - Regular expressions in node.js
+    Day 4 - Console module in node.js
+    Day 5 - All about errors
+    Day 6 - Array methods
+    Day 7 - All about NPM
+    Day 8 - Publishing package on NPM
+    Day 9 - Crypto Module ( Hashing and HMAC)
+    Day 10 - Crypto Module ( Encryption and Decryption )
+    Day 11 - Express Framework
+    Day 12 - CRUD in MongoDB using node.js
+    Day 13 - Sign Up form in node.js
+    Day 14 - Introduction to socket.io
+    Day 15 - All about streams
+    Day 16 - Zlib Module
+    Day 17 - CRUD in MySQL using node.js
+    Day 18 - Concepts of callbacks in node.js
+    Day 19 - Query String in node.js
+    Day 20 - Timers in node.js
+    Day 21 - Buffers in node.js
+    Day 22 - String Decoder Module in node.js
+    Day 23 - Debugger module in node.js
+    Day 24 - Child Processes in node.js
+    Day 25 - Clusters in node.js
+    Day 26 - OS module in node.js
+    Day 27 - Assert module in node.js
+    Day 28 - Getting Tweets using node.js
+    Day 29 - Uploading file to dropbox using node.js
+    Day 30 - Github API with node.js
+
+What are callbacks ?
+
+Node.js is asynchronous which means node.js doesn't wait for the blocking functions ( such as file I/O , calling some RestAPI and waiting for result or writing some data to db , etc ) to finish instead node.js uses callbacks and carries on with the execution of other tasks. A callback is simply a asynchronous equivalent for a function which is called after the execution of given task. Concept of callback prevents any blocking in node.js and allow other tasks to be executed in the meantime. It is named callback because at some point of time it is going to be called back . Node.js makes ample use of callbacks. All APIs in node.js supports the concept of callbacks.
+Non-Blocking Vs Blocking code
+One of the features which distinguishes Node.js is that it uses non-blocking code. Let's understand by looking at the difference between Blocking and Non-Blocking code. So what're the scenarios where the code can go blocking:
+
+    Calling some REST API and waiting for results.
+    Writing some data to a DB
+    Reading data from a file on FileSystem
+    Writing data to a file on FileSystem
+
+we will take example of reading a file. Following image gives a scenario of how blocking and non-blocking code would work to read a file and print contents on the console. Blocking vs Non Blocking Diagram Let's understand these in more details with the help of coding examples :
+
+
+
+    Blocking Code : The function whose execution is affected by other functions/tasks or in simple terms which are synchronous in nature comes under blocking code.
+
+    											
+    //Name of the File is  : blocking-code.js
+    var fs = require('fs');
+
+    //For calculating execution time
+    var date1 = new Date();
+    var time_start = date1.getTime();
+    console.log("starting at: " + time_start);
+    console.log("Let's start reading file");
+
+
+    //Name of the file to be read
+    var filename = 'output.txt'; 
+    //Reading file synchronously
+    var content = fs.readFileSync(filename);
+    console.log('Content : ' + content);
+
+
+    //For calculating execution time
+    var date2 = new Date();
+    var time_end = date2.getTime();
+    console.log("finishing at: " + time_end);
+    var execution_time = time_end - time_start;
+    console.log("Time for execution: " + execution_time );
+
+
+    //Consider it some another task in queue
+    console.log('Another task to be executed');
+    											
+    										
+    JavaScript
+    Copy
+
+
+    We can the run the above snippet in the following way :
+
+    											
+    >node blocking-code.js
+    starting at: 1510699688357
+    Let's start reading file
+    Content : Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. A
+    enean massa. Cum sociis natoque pena....
+    ...
+    ...Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur
+     ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent cong
+    ue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan curs
+    us velit. Vestibulum ante ipsum primis in
+    finishing at: 1510699688374
+    Time for execution: 17
+    Another task to be executed
+    											
+    										
+    JavaScript
+    Copy
+
+
+    As you can clearly see, another task is blocked for some time and hence it comes under blocking code.
+
+
+    Non-blocking Code : The function whose execution is not affected by other functions/tasks or in simple terms which are asynchronous in nature comes under non-blocking code.
+
+    											
+    //Name of the file: non-blocking-code.js
+    var fs = require('fs');
+
+
+    //For calculating execution time
+    var date1 = new Date();
+    var time_start = date1.getTime();
+    console.log("{Check point 1} starting at: " + time_start);
+    console.log("Let's start reading file");
+
+
+    //Name of the file to be read
+    var filename = 'output.txt'; 
+    //Reading file asynchronously
+    fs.readFile('output.txt', (err, data) => {
+    	if (err) 
+    		throw err;
+    		
+    	console.log("Content :  " + data);
+    });
+
+
+    //For calculating execution time
+    var date2 = new Date();
+    var time_end = date2.getTime();
+    console.log("{Check point 2} finishing at:  " + time_end);
+    var execution_time = time_end - time_start;
+    console.log("Time for execution: " + execution_time );
+    //Consider it some another task in queue
+    console.log('Another task to be executed');
+
+    											
+    										
+    JavaScript
+    Copy
+
+
+
+    We can the run the above snippet in the following way :
+
+    											
+    >node non-blocking-code.js
+    {Check point 1} starting at: 1510700249917
+    Let's start reading file
+    {Check point 2} finishing at: 1510700249920
+    Time for execution: 3
+    Another task to be executed
+    Content :  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+    Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Don
+    ec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Done
+    c pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a,
+     venenatis vitae, justo.....
+    ...
+    ...Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur
+     ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent cong
+    ue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan curs
+    us velit. Vestibulum ante ipsum primis in
+    											
+    										
+    JavaScript
+    Copy
+
+
+
+    There are 2 important things to observe from the output :
+        Another task to be executed is executed before the completion of the read file task which signifies towards the non-blocking nature of function and also the concept of callbacks.
+        Another interesting to observe is that the execution time comes only 3 which is incorrect . It is incorrect because as the program is running asynchronously here, so this 3 only signifies the time it took for the program to reach check point 2 from check point 1s and not the time the program took to read all the content.
+
+Callback Hell
+The level when so many callbacks are nested within other callbacks making it difficult to debug or understand the code. Callback hell is also known as Pyramid of Doom.
+
+											
+fxn1(function(){
+    fxn2(function(){
+        fxn3(function(){
+            fxn4(function(){
+				fxn5(function(){
+					fxn6(function(){
+						fxn7(function(){
+							fxn8(function(){
+								....
+            
+			
+							});
+						});
+					});
+				});
+			});
+        });
+    });
+});
+											
+										
+Bash
+Copy
+
+
+Avoiding callback hell
+
+    Modularization : By making our code as much modular as possible, callback hell can be avaoided.
+    Promises : We can use the concepts of promises to avoid callback hell.
+    Async.js : Async is a very powerful module on npm , which can be used to avoid callback hell.
+    Chaining promises : We can avoid callback hell by chaining promises. 
+
+Summary
+
+In this chapter of 30 days of node tutorial series, we learned about the concept of callbacks, blocking and non-blocking code, callback hell and lastly how to avoid callback hell.
+
+
+
+
+    Previous
+    Home
+    Next
+
+
+
+
+
+
+Nodejsera
+Tutorials
+
+    30 days of node
+    Node.js
+    NoSQL
+    Node-mongo
+    Ionic
+    Gulp
+    Python
+    Javascript
+
+Engage
+
+    Advertise
+    Workshop
+    Seminar
+    Guidance
+
+About
+
+    About Us
+    Privacy Policy
+    Terms of use
+    site-map
+
+2017 Nodejsera
+AddThis Sharing Sidebar
+Share to Facebook
+, Number of shares
+Share to Twitter
+Share to Print
+Share to Flipboard
+More AddThis Share options
+, Number of shares
+SHARES
+
